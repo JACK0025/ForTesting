@@ -11,7 +11,7 @@ pipeline {
     stages('Checkout') {
         stage('Checkout') {
         steps {
-            checkout scm
+            git branch: 'main', url: 'https://github.com/JACK0025/ForTesting.git'
         }
     }
         stage('Install Dependencies') {
