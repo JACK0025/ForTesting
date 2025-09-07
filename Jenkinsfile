@@ -6,6 +6,8 @@ pipeline {
     environment {
         IMAGE_NAME = 'test-image'
         CONTAINER_NAME = 'test-container'
+        SAVED_IMAGE_FILE='test-image.tar'
+        LOCAL_IMAGE_NAME='test-image:latest'
     }
     // Initial checkout stage to pull the latest code from SCM
     stages('Checkout') {
@@ -35,6 +37,7 @@ pipeline {
                         error('Stopping pipeline due to failed tests')
                     }
                 }
+            }
         }
         stage('Build Docker Image') {
             steps {
@@ -44,20 +47,11 @@ pipeline {
                 }
             }
         }
-        stage('Run Docker Container') {
+        stage('Save Docker Image to File') {
             steps {
                 script {
-                    echo "Running Docker container..."
-                    sh "docker run -d --name ${CONTAINER_NAME} ${IMAGE_NAME}"
-                }
-            }
-        }
-        stage('Test Application') {
-            steps {
-                script {
-                    echo "Testing application inside the container..."
-                    // Example test command, replace with actual test commands
-                    sh "docker exec ${CONTAINER_NAME} curl -f http://localhost:8080 || exit 1"
+                    echo "Saving Docker image to .tar file..."
+                    sh "docker save -o ${SAVED_IMAGE_FILE} ${LOCAL_IMAGE_NAME}"
                 }
             }
         }
@@ -66,8 +60,6 @@ pipeline {
         always {
             script {
                 echo "Cleaning up..."
-                // Stop and remove the Docker container
-                sh "docker stop ${CONTAINER_NAME} || true"
                 sh "docker rm ${CONTAINER_NAME} || true"
                 // Optionally remove the Docker image
                 sh "docker rmi ${IMAGE_NAME} || true"
@@ -75,6 +67,7 @@ pipeline {
         }
         success {
             echo "Pipeline completed successfully!"
+            archiveArtifacts artifacts: "${SAVED_IMAGE_FILE}", fingerprint: true
         }
         failure {
             echo "Pipeline failed. Please check the logs."
