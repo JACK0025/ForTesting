@@ -26,11 +26,15 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    echo "Running tests..."
-                    // Example command to run tests, replace with actual test commands
-                    sh "npm test"
+                    try {
+                        sh 'npm test'
+                        echo '✅ All tests passed!'
+                    } catch (Exception e) {
+                        echo '❌ Tests failed!'
+                        currentBuild.result = 'FAILURE'
+                        error('Stopping pipeline due to failed tests')
+                    }
                 }
-            }
         }
         stage('Build Docker Image') {
             steps {
