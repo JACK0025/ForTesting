@@ -9,29 +9,29 @@ pipeline {
     }
     // Initial checkout stage to pull the latest code from SCM
     stages('Checkout') {
+        stage('Checkout') {
         steps {
             checkout scm
         }
     }
-    stage('Install Dependencies') {
-        steps {
-            script {
-                echo "Installing dependencies..."
-                // Example command to install dependencies, replace with actual commands
-                sh "npm install" // or "pip install -r requirements.txt" etc.
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    echo "Installing dependencies..."
+                    // Example command to install dependencies, replace with actual commands
+                    sh "npm install"
+                }
             }
         }
-    }
-    stage('Run Tests') {
-        steps {
-            script {
-                echo "Running tests..."
-                // Example command to run tests, replace with actual test commands
-                sh "npm test" // or "pytest tests/" etc.
+        stage('Run Tests') {
+            steps {
+                script {
+                    echo "Running tests..."
+                    // Example command to run tests, replace with actual test commands
+                    sh "npm test"
+                }
             }
         }
-    }
-    stages {
         stage('Build Docker Image') {
             steps {
                 script {
