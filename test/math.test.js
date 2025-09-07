@@ -18,7 +18,7 @@ describe('add()', () => {
 
 describe('subtract()', () => {
   it('should return -1 when subtracting 2 and 3', () => {
-    expect(subtraction(2, 3)).to.equal(1);
+    expect(subtraction(2, 3)).to.equal(-1);
   });
 
   it('should return 5 when subtracting 10 and 5', () => {
